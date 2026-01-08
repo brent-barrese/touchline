@@ -6,14 +6,49 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D5E7E4E82F0CF0770013F986 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4E52F0CF0770013F986 /* ContentView.swift */; };
+		D5E7E4EE2F0CF5CE0013F986 /* PlayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4EC2F0CF5C50013F986 /* PlayersView.swift */; };
+		D5E7E4F12F0CF5E20013F986 /* MatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4EF2F0CF5DA0013F986 /* MatchView.swift */; };
+		D5E7E4F32F0CF7720013F986 /* PreviousMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4F22F0CF7720013F986 /* PreviousMatchView.swift */; };
+		D5E7E4F62F0CF8BE0013F986 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4F42F0CF8BC0013F986 /* Player.swift */; };
+		D5E7E4FC2F0CFCEB0013F986 /* AddPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4FA2F0CFCE40013F986 /* AddPlayerView.swift */; };
+		D5E7E50D2F0F38780013F986 /* MatchPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E50C2F0F38720013F986 /* MatchPlayer.swift */; };
+		D5E7E50F2F0F39580013F986 /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E50E2F0F39540013F986 /* Match.swift */; };
+		D5E7E5112F0F5EE50013F986 /* MatchActiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E5102F0F5EDF0013F986 /* MatchActiveView.swift */; };
+		D5E7E5132F0F60210013F986 /* MatchSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E5122F0F60180013F986 /* MatchSetupView.swift */; };
+		D5E7E5152F0F61760013F986 /* MatchClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E5142F0F61720013F986 /* MatchClockView.swift */; };
+		D5E7E5172F0F641B0013F986 /* TimeFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E5162F0F64170013F986 /* TimeFormatter.swift */; };
+		D5E7E5192F0F71B80013F986 /* SubSuggestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E5182F0F71B40013F986 /* SubSuggestionsView.swift */; };
+		D5E7E51B2F0F78920013F986 /* MatchHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E51A2F0F78860013F986 /* MatchHistoryView.swift */; };
+		D5E7E51D2F0F78B20013F986 /* MatchSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E51C2F0F78AE0013F986 /* MatchSummaryView.swift */; };
+		D5E7E5212F1049F00013F986 /* PlayerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E5202F1049EC0013F986 /* PlayerRow.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D5DA84DE2F0AE2EF0061A5AE /* TouchLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TouchLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5E7E4E52F0CF0770013F986 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D5E7E4EC2F0CF5C50013F986 /* PlayersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersView.swift; sourceTree = "<group>"; };
+		D5E7E4EF2F0CF5DA0013F986 /* MatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchView.swift; sourceTree = "<group>"; };
+		D5E7E4F22F0CF7720013F986 /* PreviousMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviousMatchView.swift; sourceTree = "<group>"; };
+		D5E7E4F42F0CF8BC0013F986 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		D5E7E4FA2F0CFCE40013F986 /* AddPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPlayerView.swift; sourceTree = "<group>"; };
+		D5E7E50C2F0F38720013F986 /* MatchPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchPlayer.swift; sourceTree = "<group>"; };
+		D5E7E50E2F0F39540013F986 /* Match.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Match.swift; sourceTree = "<group>"; };
+		D5E7E5102F0F5EDF0013F986 /* MatchActiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchActiveView.swift; sourceTree = "<group>"; };
+		D5E7E5122F0F60180013F986 /* MatchSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSetupView.swift; sourceTree = "<group>"; };
+		D5E7E5142F0F61720013F986 /* MatchClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchClockView.swift; sourceTree = "<group>"; };
+		D5E7E5162F0F64170013F986 /* TimeFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatter.swift; sourceTree = "<group>"; };
+		D5E7E5182F0F71B40013F986 /* SubSuggestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSuggestionsView.swift; sourceTree = "<group>"; };
+		D5E7E51A2F0F78860013F986 /* MatchHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchHistoryView.swift; sourceTree = "<group>"; };
+		D5E7E51C2F0F78AE0013F986 /* MatchSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSummaryView.swift; sourceTree = "<group>"; };
+		D5E7E5202F1049EC0013F986 /* PlayerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D5DA84E02F0AE2EF0061A5AE /* TouchLine */ = {
+		D5DA84E02F0AE2EF0061A5AE /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TouchLine;
+			path = App;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,8 +67,11 @@
 		D5DA84D52F0AE2EF0061A5AE = {
 			isa = PBXGroup;
 			children = (
-				D5DA84E02F0AE2EF0061A5AE /* TouchLine */,
+				D5DA84E02F0AE2EF0061A5AE /* App */,
+				D5E7E5032F0CFE650013F986 /* Models */,
 				D5DA84DF2F0AE2EF0061A5AE /* Products */,
+				D5E7E5162F0F64170013F986 /* TimeFormatter.swift */,
+				D5E7E5052F0CFE7C0013F986 /* Views */,
 			);
 			sourceTree = "<group>";
 		};
@@ -43,6 +81,35 @@
 				D5DA84DE2F0AE2EF0061A5AE /* TouchLine.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D5E7E5032F0CFE650013F986 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D5E7E50E2F0F39540013F986 /* Match.swift */,
+				D5E7E50C2F0F38720013F986 /* MatchPlayer.swift */,
+				D5E7E4F42F0CF8BC0013F986 /* Player.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D5E7E5052F0CFE7C0013F986 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D5E7E5202F1049EC0013F986 /* PlayerRow.swift */,
+				D5E7E4FA2F0CFCE40013F986 /* AddPlayerView.swift */,
+				D5E7E4E52F0CF0770013F986 /* ContentView.swift */,
+				D5E7E5102F0F5EDF0013F986 /* MatchActiveView.swift */,
+				D5E7E5142F0F61720013F986 /* MatchClockView.swift */,
+				D5E7E51A2F0F78860013F986 /* MatchHistoryView.swift */,
+				D5E7E5122F0F60180013F986 /* MatchSetupView.swift */,
+				D5E7E51C2F0F78AE0013F986 /* MatchSummaryView.swift */,
+				D5E7E4EF2F0CF5DA0013F986 /* MatchView.swift */,
+				D5E7E4EC2F0CF5C50013F986 /* PlayersView.swift */,
+				D5E7E4F22F0CF7720013F986 /* PreviousMatchView.swift */,
+				D5E7E5182F0F71B40013F986 /* SubSuggestionsView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -61,7 +128,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				D5DA84E02F0AE2EF0061A5AE /* TouchLine */,
+				D5DA84E02F0AE2EF0061A5AE /* App */,
 			);
 			name = TouchLine;
 			packageProductDependencies = (
@@ -119,6 +186,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5E7E5112F0F5EE50013F986 /* MatchActiveView.swift in Sources */,
+				D5E7E50D2F0F38780013F986 /* MatchPlayer.swift in Sources */,
+				D5E7E50F2F0F39580013F986 /* Match.swift in Sources */,
+				D5E7E4F32F0CF7720013F986 /* PreviousMatchView.swift in Sources */,
+				D5E7E51D2F0F78B20013F986 /* MatchSummaryView.swift in Sources */,
+				D5E7E4E82F0CF0770013F986 /* ContentView.swift in Sources */,
+				D5E7E4F12F0CF5E20013F986 /* MatchView.swift in Sources */,
+				D5E7E5132F0F60210013F986 /* MatchSetupView.swift in Sources */,
+				D5E7E5172F0F641B0013F986 /* TimeFormatter.swift in Sources */,
+				D5E7E5212F1049F00013F986 /* PlayerRow.swift in Sources */,
+				D5E7E4FC2F0CFCEB0013F986 /* AddPlayerView.swift in Sources */,
+				D5E7E51B2F0F78920013F986 /* MatchHistoryView.swift in Sources */,
+				D5E7E5192F0F71B80013F986 /* SubSuggestionsView.swift in Sources */,
+				D5E7E4F62F0CF8BE0013F986 /* Player.swift in Sources */,
+				D5E7E5152F0F61760013F986 /* MatchClockView.swift in Sources */,
+				D5E7E4EE2F0CF5CE0013F986 /* PlayersView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
