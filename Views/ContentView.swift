@@ -10,22 +10,65 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+
+    // Detect any active match in the database
+    @Query(filter: #Predicate<Match> { $0.endTime == nil })
+    private var activeMatches: [Match]
+
+    // Track the match the user is currently viewing/starting
+    @State private var activeMatch: Match?
+    @State private var showSetup = false
+    @State private var showMatch = false // <-- needed for navigationDestination
 
     var body: some View {
         NavigationStack {
             List {
-                NavigationLink("Players"){
+                // Resume active match
+                if let match = activeMatches.first {
+                    Label("Resume Current Match", systemImage: "soccerball")
+                        .foregroundStyle(.green)
+                        .onTapGesture {
+                            activeMatch = match
+                            showMatch = true
+                        }
+                }
+
+                NavigationLink("Players") {
                     PlayersView()
                 }
-                NavigationLink("Start Match"){
-                    MatchView()
+
+                // Start Match button
+                Button("Start Match") {
+                    showSetup = true
                 }
-                NavigationLink("Previous Matches"){
+                .disabled(activeMatches.first != nil) // only disable if a truly active match exists
+
+                NavigationLink("Previous Matches") {
                     MatchHistoryView()
                 }
             }
-            .navigationTitle("Test")
+            .navigationTitle("TouchLine")
+
+            // Programmatic navigation to MatchView
+            .navigationDestination(isPresented: $showMatch) {
+                if let match = activeMatch {
+                    MatchView(match: match)
+                } else {
+                    Text("No active match")
+                }
+            }
+
+            // Start Match sheet
+            .sheet(isPresented: $showSetup) {
+                NavigationStack {
+                    MatchSetupView { newMatch in
+                        // After creating match, navigate to it
+                        activeMatch = newMatch
+                        showSetup = false
+                        showMatch = true
+                    }
+                }
+            }
         }
     }
 }

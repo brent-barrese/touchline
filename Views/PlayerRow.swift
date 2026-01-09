@@ -30,6 +30,7 @@ struct PlayerRow: View {
             .disabled(isMatchEnded)
         }
         .padding(.vertical, 4)
+        .opacity(isMatchEnded ? 0.5 : 1.0)
     }
 
     private var timeString: String {

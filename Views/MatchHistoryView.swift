@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct MatchHistoryView: View {
+    @Environment(\.modelContext) private var modelContext
+
     @Query(sort: \Match.startTime, order: .reverse)
     private var matches: [Match]
 
@@ -20,10 +22,11 @@ struct MatchHistoryView: View {
                     systemImage: "clock"
                 )
             } else {
-                List(matches, id: \.persistentModelID) { match in
-                    NavigationLink(
-                        destination: MatchSummaryView(match: match),
-                        label: {
+                List {
+                    ForEach(matches, id: \.persistentModelID) { match in
+                        NavigationLink {
+                            MatchSummaryView(match: match)
+                        } label: {
                             HStack {
                                 Text(
                                     match.startTime.formatted(
@@ -34,14 +37,27 @@ struct MatchHistoryView: View {
 
                                 Spacer()
 
-                                Text(match.endTime != nil ? "Ended" : "In Progress")
-                                    .foregroundColor(match.endTime != nil ? .secondary : .green)
+                                Text(match.isEnded ? "Ended" : "In Progress")
+                                    .foregroundColor(
+                                        match.isEnded ? .secondary : .green
+                                    )
                             }
                         }
-                    )
+                    }
+                    .onDelete(perform: deleteMatches)
                 }
             }
         }
         .navigationTitle("Match History")
+    }
+
+    private func deleteMatches(at offsets: IndexSet) {
+        for index in offsets {
+            let match = matches[index]
+
+            guard match.isEnded else { continue }
+
+            modelContext.delete(match)
+        }
     }
 }

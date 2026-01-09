@@ -21,7 +21,9 @@ struct MatchActiveView: View {
             MatchClockView(elapsedSeconds: match.elapsedSeconds(at: now))
                 .opacity(match.isEnded ? 0.5 : 1.0)
 
-            SubSuggestionsView(match: match, now: now)
+            if !match.isEnded {
+                SubSuggestionsView(match: match, now: now)
+            }
 
             Button(role: .destructive) {
                 endMatch()

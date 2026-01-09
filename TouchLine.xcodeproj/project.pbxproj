@@ -96,7 +96,6 @@
 		D5E7E5052F0CFE7C0013F986 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D5E7E5202F1049EC0013F986 /* PlayerRow.swift */,
 				D5E7E4FA2F0CFCE40013F986 /* AddPlayerView.swift */,
 				D5E7E4E52F0CF0770013F986 /* ContentView.swift */,
 				D5E7E5102F0F5EDF0013F986 /* MatchActiveView.swift */,
@@ -105,6 +104,7 @@
 				D5E7E5122F0F60180013F986 /* MatchSetupView.swift */,
 				D5E7E51C2F0F78AE0013F986 /* MatchSummaryView.swift */,
 				D5E7E4EF2F0CF5DA0013F986 /* MatchView.swift */,
+				D5E7E5202F1049EC0013F986 /* PlayerRow.swift */,
 				D5E7E4EC2F0CF5C50013F986 /* PlayersView.swift */,
 				D5E7E4F22F0CF7720013F986 /* PreviousMatchView.swift */,
 				D5E7E5182F0F71B40013F986 /* SubSuggestionsView.swift */,
