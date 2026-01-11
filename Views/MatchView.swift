@@ -91,39 +91,3 @@ struct MatchView: View {
         onMatchEnded?()
     }
 }
-
-
-//struct MatchView: View {
-//    @Query(filter: #Predicate<Match> { $0.endTime == nil })
-//    private var activeMatches: [Match]
-//    @State private var showSetup = false
-//    @State private var activeMatch: Match?
-//
-////    private var activeMatch: Match? {
-////        activeMatches.first
-////    }
-//
-//    var body: some View {
-//        VStack {
-//            if let match = activeMatch ?? activeMatches.first {
-//                MatchActiveView(match: match)
-//                    .onAppear { activeMatch = match }
-//            } else {
-//                Button("Start Match") {
-//                    showSetup = true
-//                }
-//                .buttonStyle(.borderedProminent)
-//            }
-//        }
-//        .navigationTitle("Match")
-//        .sheet(isPresented: $showSetup) {
-//            NavigationStack {
-//                MatchSetupView { match in
-//                    // After match is created, close sheet & set activeMatch
-//                    activeMatch = match
-//                    showSetup = false
-//                }
-//            }
-//        }
-//    }
-//}
