@@ -10,17 +10,11 @@ import SwiftData
 
 struct MatchHistoryView: View {
     @Environment(\.modelContext) private var modelContext
-
     @Query(sort: \Match.startTime, order: .reverse)
     private var matches: [Match]
-    
-    private var activeMatches: [Match] {
-        matches.filter { !$0.isEnded }
-    }
 
-    private var endedMatches: [Match] {
-        matches.filter { $0.isEnded }
-    }
+    // Local snapshot for ended matches to avoid SwiftData live-query crash
+    @State private var endedMatches: [Match] = []
 
     var body: some View {
         NavigationStack {
@@ -31,6 +25,8 @@ struct MatchHistoryView: View {
                 )
             } else {
                 List {
+                    // In Progress Matches (read-only)
+                    let activeMatches = matches.filter { !$0.isEnded }
                     if !activeMatches.isEmpty {
                         Section("In Progress") {
                             ForEach(activeMatches, id: \.persistentModelID) { match in
@@ -39,6 +35,7 @@ struct MatchHistoryView: View {
                         }
                     }
 
+                    // Ended Matches (deletable)
                     if !endedMatches.isEmpty {
                         Section("Ended Matches") {
                             ForEach(endedMatches, id: \.persistentModelID) { match in
@@ -51,30 +48,33 @@ struct MatchHistoryView: View {
             }
         }
         .navigationTitle("Match History")
-    }
-
-    private func deleteEndedMatches(at offsets: IndexSet) {
-        for index in offsets {
-            let match = endedMatches[index]
-            modelContext.delete(match)
+        .onAppear {
+            // Initialize snapshot from live query
+            endedMatches = matches.filter { $0.isEnded }
         }
     }
-    
+
+    // Delete from Core Data and remove from snapshot
+    private func deleteEndedMatches(at offsets: IndexSet) {
+        let toDelete = offsets.map { endedMatches[$0] }
+
+        for match in toDelete {
+            modelContext.delete(match)
+        }
+
+        withAnimation {
+            endedMatches.remove(atOffsets: offsets)
+        }
+    }
+
     @ViewBuilder
     private func matchRow(_ match: Match) -> some View {
         NavigationLink {
             MatchSummaryView(match: match)
         } label: {
             HStack {
-                Text(
-                    match.startTime.formatted(
-                        date: .abbreviated,
-                        time: .shortened
-                    )
-                )
-
+                Text(match.startTime.formatted(date: .abbreviated, time: .shortened))
                 Spacer()
-
                 Text(match.isEnded ? "Ended" : "In Progress")
                     .foregroundColor(match.isEnded ? .secondary : .green)
             }

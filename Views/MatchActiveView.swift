@@ -11,9 +11,8 @@ import Combine
 
 struct MatchActiveView: View {
     let match: Match  // SwiftData @Model
-    @State private var now = Date()  // live clock
-
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var now = Date()        // live clock
+    @State private var timerCancellable: Cancellable?
 
     var body: some View {
         VStack {
@@ -21,10 +20,12 @@ struct MatchActiveView: View {
             MatchClockView(elapsedSeconds: match.elapsedSeconds(at: now))
                 .opacity(match.isEnded ? 0.5 : 1.0)
 
+            // Suggestions only if match is active
             if !match.isEnded {
                 SubSuggestionsView(match: match, now: now)
             }
 
+            // Example action: End match button (disabled if ended)
             Button(role: .destructive) {
                 endMatch()
             } label: {
@@ -34,14 +35,16 @@ struct MatchActiveView: View {
             .padding(.horizontal)
             .disabled(match.isEnded)
 
+            // Player lists
             List {
                 Section("On the Field") {
                     ForEach(match.matchPlayers.filter { $0.isOnField }) { mp in
                         PlayerRow(
                             matchPlayer: mp,
                             isMatchEnded: match.isEnded,
-                            now: $now  // <- pass binding
+                            now: $now
                         )
+                        .disabled(match.isEnded) // lock interaction if match ended
                     }
                 }
 
@@ -50,17 +53,31 @@ struct MatchActiveView: View {
                         PlayerRow(
                             matchPlayer: mp,
                             isMatchEnded: match.isEnded,
-                            now: $now  // <- pass binding
+                            now: $now
                         )
+                        .disabled(match.isEnded) // lock interaction if match ended
                     }
                 }
             }
         }
-        .onReceive(timer) { newTime in
-            if !match.isEnded {
-                now = newTime  // triggers redraw in PlayerRow via binding
+        .onAppear { startTimer() }
+        .onDisappear { stopTimer() }
+    }
+
+    private func startTimer() {
+        stopTimer() // avoid duplicates
+        timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { newTime in
+                if !match.isEnded {
+                    now = newTime
+                }
             }
-        }
+    }
+
+    private func stopTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
     }
 
     private func endMatch() {
@@ -75,5 +92,8 @@ struct MatchActiveView: View {
         }
 
         match.endTime = end
+
+        // stop the timer immediately
+        stopTimer()
     }
 }

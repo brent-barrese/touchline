@@ -10,6 +10,7 @@ import Foundation
 
 @Model
 class Match {
+    var sport: SportType = SportType.soccer
     var startTime: Date
     var endTime: Date?
 
@@ -20,8 +21,9 @@ class Match {
             endTime != nil
         }
 
-    init(players: [Player]) {
+    init(players: [Player], sport: SportType = .soccer) {
         self.startTime = Date()
+        self.sport = sport
         self.matchPlayers = players.map { MatchPlayer(player: $0) }
     }
     

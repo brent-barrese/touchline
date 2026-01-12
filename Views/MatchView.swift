@@ -10,18 +10,12 @@ import SwiftData
 import Combine
 
 struct MatchView: View {
-    // Injected match from parent
     let match: Match
-    
-    // Optional callback to notify parent when match ends
     var onMatchEnded: (() -> Void)? = nil
 
-
-    @State private var showSetup = false
-    @State private var now = Date()  // live clock
-
-    // Timer for the match clock
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var now = Date()              // live clock
+    @State private var showEndConfirmation = false
+    @State private var timerCancellable: Cancellable?
 
     var body: some View {
         VStack {
@@ -36,7 +30,7 @@ struct MatchView: View {
 
             // End match button
             Button(role: .destructive) {
-                endMatch()
+                showEndConfirmation = true
             } label: {
                 Text("End Match")
                     .frame(maxWidth: .infinity)
@@ -53,6 +47,7 @@ struct MatchView: View {
                             isMatchEnded: match.isEnded,
                             now: $now
                         )
+                        .disabled(match.isEnded)
                     }
                 }
 
@@ -63,15 +58,38 @@ struct MatchView: View {
                             isMatchEnded: match.isEnded,
                             now: $now
                         )
+                        .disabled(match.isEnded)
                     }
                 }
             }
         }
-        .onReceive(timer) { newTime in
-            if !match.isEnded {
-                now = newTime
+        .onAppear { startTimer() }
+        .onDisappear { stopTimer() }
+        .alert("End Match?", isPresented: $showEndConfirmation) {
+            Button("End Match", role: .destructive) {
+                endMatch()
             }
+            Button("Cancel", role: .cancel) {
+            }
+        } message: {
+            Text("This will finalize the match and lock all player stats.")
         }
+    }
+
+    private func startTimer() {
+        stopTimer()
+        timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { newTime in
+                if !match.isEnded {
+                    now = newTime
+                }
+            }
+    }
+
+    private func stopTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
     }
 
     private func endMatch() {
@@ -86,8 +104,11 @@ struct MatchView: View {
         }
 
         match.endTime = end
-        
-        // Notify parent that match ended
+
+        // Stop timer immediately
+        stopTimer()
+
+        // Notify parent
         onMatchEnded?()
     }
 }
