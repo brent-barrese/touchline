@@ -13,22 +13,80 @@ struct MatchView: View {
     let match: Match
     var onMatchEnded: (() -> Void)? = nil
 
-    @State private var now = Date()              // live clock
+    @State private var now = Date()
     @State private var showEndConfirmation = false
     @State private var timerCancellable: Cancellable?
 
     var body: some View {
         VStack {
+            // Match name
+            Text(match.name)
+                .font(.title2)
+                .bold()
+                .padding(.top)
+            
+            if !match.isEnded {
+                if match.isPaused {
+                    Button {
+                        match.resume(at: now)
+                    } label: {
+                        Label("Resume", systemImage: "play.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.green)
+                    .padding(.horizontal)
+
+                    if let reason = match.pauseReason {
+                        Text(reason == .halftime ? "Halftime" : "Paused")
+                            .font(.headline)
+                            .foregroundColor(.orange)
+                            .padding(.bottom, 4)
+                    }
+                } else {
+                    VStack(spacing: 6) {
+                        HStack {
+                            Button {
+                                match.startHalftime(at: now)
+                            } label: {
+                                Label("Halftime", systemImage: "pause.circle")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.blue)
+                            .disabled(match.hasHadHalftime || match.isEnded)
+                            .opacity(match.hasHadHalftime ? 0.4 : 1.0)
+
+                            Button {
+                                match.pause(at: now)
+                            } label: {
+                                Label("Pause", systemImage: "pause.fill")
+                                    .frame(maxWidth: .infinity)
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.orange)
+
+                        if match.hasHadHalftime {
+                            Text("Halftime already completed")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+
             // Match clock
             MatchClockView(elapsedSeconds: match.elapsedSeconds(at: now))
                 .opacity(match.isEnded ? 0.5 : 1.0)
 
-            // Suggestions only if match is active
-            if !match.isEnded {
+            // Sub suggestions only if match active
+            if !match.isEnded && !match.isPaused {
                 SubSuggestionsView(match: match, now: now)
             }
 
-            // End match button
+            // End Match button
             Button(role: .destructive) {
                 showEndConfirmation = true
             } label: {
@@ -47,7 +105,7 @@ struct MatchView: View {
                             isMatchEnded: match.isEnded,
                             now: $now
                         )
-                        .disabled(match.isEnded)
+                        .disabled(match.isEnded || match.isPaused)
                     }
                 }
 
@@ -58,7 +116,7 @@ struct MatchView: View {
                             isMatchEnded: match.isEnded,
                             now: $now
                         )
-                        .disabled(match.isEnded)
+                        .disabled(match.isEnded || match.isPaused)
                     }
                 }
             }
@@ -69,8 +127,7 @@ struct MatchView: View {
             Button("End Match", role: .destructive) {
                 endMatch()
             }
-            Button("Cancel", role: .cancel) {
-            }
+            Button("Cancel", role: .cancel) { }
         } message: {
             Text("This will finalize the match and lock all player stats.")
         }
@@ -104,11 +161,16 @@ struct MatchView: View {
         }
 
         match.endTime = end
-
-        // Stop timer immediately
         stopTimer()
-
-        // Notify parent
         onMatchEnded?()
     }
+
+    private func togglePause() {
+        if match.isPaused {
+            match.resume(at: now)
+        } else {
+            match.pause(at: now)
+        }
+    }
 }
+

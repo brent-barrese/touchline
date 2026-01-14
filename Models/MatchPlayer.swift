@@ -26,6 +26,7 @@ class MatchPlayer{
                 return totalSecondsPlayed
             }
         }
+    
 }
 
 extension MatchPlayer {

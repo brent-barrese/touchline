@@ -73,8 +73,22 @@ struct MatchHistoryView: View {
             MatchSummaryView(match: match)
         } label: {
             HStack {
-                Text(match.startTime.formatted(date: .abbreviated, time: .shortened))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(match.name)
+                        .font(.headline)
+
+                    Text(
+                        match.startTime.formatted(
+                            date: .abbreviated,
+                            time: .shortened
+                        )
+                    )
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                }
+
                 Spacer()
+
                 Text(match.isEnded ? "Ended" : "In Progress")
                     .foregroundColor(match.isEnded ? .secondary : .green)
             }

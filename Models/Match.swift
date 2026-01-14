@@ -13,24 +13,37 @@ class Match {
     var sport: SportType = SportType.soccer
     var startTime: Date
     var endTime: Date?
+    var name: String
 
     @Relationship(deleteRule: .cascade)
     var matchPlayers: [MatchPlayer] = []
     
-    var isEnded: Bool {
-            endTime != nil
-        }
+    var pausedAt: Date?
+    var totalPausedSeconds: TimeInterval = 0
+    var pauseReason: MatchPauseReason?
+    var isEnded: Bool { endTime != nil }
+    var isPaused: Bool { pausedAt != nil }
+    var hasHadHalftime: Bool = false
 
-    init(players: [Player], sport: SportType = .soccer) {
+    init(name: String, players: [Player], sport: SportType = .soccer) {
+        self.name = name
         self.startTime = Date()
         self.sport = sport
         self.matchPlayers = players.map { MatchPlayer(player: $0) }
     }
     
     func elapsedSeconds(at now: Date) -> TimeInterval {
-            let end = endTime ?? now
-            return end.timeIntervalSince(startTime)
+        let effectiveEnd = endTime ?? now
+
+        var elapsed = effectiveEnd.timeIntervalSince(startTime)
+        elapsed -= totalPausedSeconds
+
+        if let pausedAt {
+            elapsed -= now.timeIntervalSince(pausedAt)
         }
+
+        return max(elapsed, 0)
+    }
 }
 
 extension Match {
@@ -46,5 +59,43 @@ extension Match {
     
     var isFinished: Bool {
         endTime != nil
+    }
+    
+    func pause(at now: Date) {
+        guard pausedAt == nil else { return }
+        pausedAt = now
+
+        // Freeze player time
+        for mp in matchPlayers where mp.isOnField {
+            if let lastIn = mp.lastSubInTime {
+                mp.totalSecondsPlayed += now.timeIntervalSince(lastIn)
+                mp.lastSubInTime = nil
+            }
+        }
+    }
+
+    func resume(at now: Date) {
+        guard let pausedAt else { return }
+
+        totalPausedSeconds += now.timeIntervalSince(pausedAt)
+        self.pausedAt = nil
+
+        // Restart player timers
+        for mp in matchPlayers where mp.isOnField {
+            mp.lastSubInTime = now
+        }
+    }
+    
+    func startHalftime(at now: Date) {
+        guard !hasHadHalftime else { return }
+
+        pause(at: now)
+        hasHadHalftime = true
+    }
+
+    func endHalftime(at now: Date) {
+        guard pauseReason == .halftime else { return }
+        pauseReason = nil
+        resume(at: now)
     }
 }

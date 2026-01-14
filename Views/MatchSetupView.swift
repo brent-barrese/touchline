@@ -15,66 +15,87 @@ struct MatchSetupView: View {
     @Query(filter: #Predicate<Match> { $0.endTime == nil })
     private var activeMatches: [Match]
 
-    @Query(sort: \Player.jerseyNumber) private var players: [Player]
+    @Query(sort: \Player.jerseyNumber)
+    private var players: [Player]
 
     @State private var selectedPlayerIDs: Set<PersistentIdentifier> = []
-    
+    @State private var matchName: String = ""
+
     let onMatchCreated: (Match) -> Void
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
 
-            // ----- Active match prompt -----
+            // ---------- Active match guard ----------
             if let currentMatch = activeMatches.first {
-                VStack(spacing: 16) {
+                VStack(spacing: 12) {
                     Text("A match is already in progress")
                         .font(.headline)
                         .multilineTextAlignment(.center)
 
                     Button("Resume Match") {
-                        dismiss() // go back to MatchView
+                        dismiss()
                     }
                     .buttonStyle(.borderedProminent)
 
                     Button("End Match") {
                         currentMatch.endTime = Date()
-                        dismiss() // go back to start match screen
+                        dismiss()
                     }
                     .foregroundStyle(.red)
                 }
                 .padding()
             }
 
-            // ----- Player selection -----
+            // ---------- New match setup ----------
             if activeMatches.isEmpty {
+
+                // Match name
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Match Info")
+                        .font(.headline)
+
+                    TextField("Match name (optional)", text: $matchName)
+                        .textFieldStyle(.roundedBorder)
+                }
+                .padding(.horizontal)
+
+                // Player selection
                 List(players) { player in
-                    Button {
-                        toggle(player)
-                    } label: {
-                        HStack {
-                            Text("#\(player.jerseyNumber)")
-                                .frame(width: 40)
-                            Text(player.name)
-                            Spacer()
-                            if selectedPlayerIDs.contains(player.persistentModelID) {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.green)
-                            }
+                    HStack {
+                        Text("#\(player.jerseyNumber)")
+                            .frame(width: 40)
+
+                        Text(player.name)
+
+                        Spacer()
+
+                        if selectedPlayerIDs.contains(player.persistentModelID) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
                         }
                     }
-                }
-                .navigationTitle("Select Players")
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Start Match") {
-                            startMatch()
-                        }
-                        .disabled(selectedPlayerIDs.isEmpty)
+                    .contentShape(Rectangle())     // ⭐ makes entire row tappable
+                    .onTapGesture {
+                        toggle(player)
                     }
                 }
             }
         }
+        .navigationTitle("New Match")
+        .toolbar {
+            if activeMatches.isEmpty {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Start Match") {
+                        startMatch()
+                    }
+                    .disabled(selectedPlayerIDs.isEmpty)
+                }
+            }
+        }
     }
+
+    // MARK: - Helpers
 
     private func toggle(_ player: Player) {
         let id = player.persistentModelID
@@ -90,95 +111,18 @@ struct MatchSetupView: View {
             selectedPlayerIDs.contains($0.persistentModelID)
         }
 
-        let match = Match(players: selectedPlayers)
+        let finalName =
+            matchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? "Match \(Date().formatted(date: .abbreviated, time: .shortened))"
+            : matchName
+
+        let match = Match(
+            name: finalName,
+            players: selectedPlayers
+        )
+
         modelContext.insert(match)
-        onMatchCreated(match)  // notify parent to navigate
+        onMatchCreated(match)
         dismiss()
     }
 }
-
-// it was working here - 1.
-//struct MatchSetupView: View {
-//    @Query(filter: #Predicate<Match> { $0.endTime == nil })
-//    private var activeMatches: [Match]
-//    
-//    let onMatchCreated: (Match) -> Void
-//    
-//    @Environment(\.modelContext) private var modelContext
-//    @Environment(\.dismiss) private var dismiss
-//
-//    @Query(sort: \Player.jerseyNumber) private var players: [Player]
-//
-//    @State private var selectedPlayerIDs: Set<PersistentIdentifier> = []
-//
-//    var body: some View {
-//        
-//        if let match = activeMatches.first {
-//            VStack(spacing: 16) {
-//                Text("A match is already in progress")
-//                    .font(.headline)
-//
-//                Button("Resume Match") {
-//                    dismiss()
-//                }
-//                .buttonStyle(.borderedProminent)
-//
-//                Button("End Match") {
-//                    match.endTime = Date()
-//                    dismiss()
-//                }
-//                .foregroundStyle(.red)
-//            }
-//            .padding()
-//        } else {
-//            List(players) { player in
-//                Button {
-//                    toggle(player)
-//                } label: {
-//                    HStack {
-//                        Text("#\(player.jerseyNumber)")
-//                            .frame(width: 40)
-//
-//                        Text(player.name)
-//
-//                        Spacer()
-//
-//                        if selectedPlayerIDs.contains(player.persistentModelID) {
-//                            Image(systemName: "checkmark.circle.fill")
-//                                .foregroundStyle(.green)
-//                        }
-//                    }
-//                }
-//            }
-//            .navigationTitle("Select Players")
-//            .toolbar {
-//                ToolbarItem(placement: .confirmationAction) {
-//                    Button("Start Match") {
-//                        startMatch()
-//                    }
-//                    .disabled(selectedPlayerIDs.isEmpty)
-//                }
-//            }
-//        }
-//    }
-//
-//    private func toggle(_ player: Player) {
-//        let id = player.persistentModelID
-//        if selectedPlayerIDs.contains(id) {
-//            selectedPlayerIDs.remove(id)
-//        } else {
-//            selectedPlayerIDs.insert(id)
-//        }
-//    }
-//
-//    private func startMatch() {
-//        let selectedPlayers = players.filter {
-//            selectedPlayerIDs.contains($0.persistentModelID)
-//        }
-//
-//        let match = Match(players: selectedPlayers)
-//        modelContext.insert(match)
-//        onMatchCreated(match)
-//        dismiss()
-//    }
-//}
