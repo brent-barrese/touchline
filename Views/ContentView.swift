@@ -51,7 +51,7 @@ struct ContentView: View {
 
                 // Previous Matches card
                 NavigationLink(destination: MatchHistoryView()) {
-                    CardView(title: "Previous Matches", systemImage: "clock.fill", backgroundColor: .gray)
+                    CardView(title: "Previous Matches", systemImage: "clock.fill", backgroundColor: .teal)
                 }
 
                 Spacer()
