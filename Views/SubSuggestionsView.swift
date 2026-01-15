@@ -25,7 +25,7 @@ struct SubSuggestionsView: View {
                     HStack {
                         Text("#\(mp.player.jerseyNumber) \(mp.player.name)")
                         Spacer()
-                        Text(formatTime(average - mp.secondsPlayed(at: now)))
+                        Text(formatTime(average - mp.secondsPlayed(match: match, at: now)))
                             .font(.system(.body, design: .monospaced))
                             .foregroundStyle(.red)
                     }
@@ -44,13 +44,13 @@ struct SubSuggestionsView: View {
     private var underplayedPlayers: [MatchPlayer] {
         // filter underplayed
         let filtered = match.matchPlayers.filter { mp in
-            mp.isUnderplayed(at: now, comparedTo: average)
+            mp.isUnderplayed(match: match, at: now, comparedTo: average)
         }
 
         // sort by how far behind they are (most underplayed first)
         let sorted = filtered.sorted { mp1, mp2 in
-            let deficit1 = average - mp1.secondsPlayed(at: now)
-            let deficit2 = average - mp2.secondsPlayed(at: now)
+            let deficit1 = average - mp1.secondsPlayed(match: match, at: now)
+            let deficit2 = average - mp2.secondsPlayed(match: match, at: now)
             return deficit1 > deficit2
         }
 

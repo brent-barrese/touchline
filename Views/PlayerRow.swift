@@ -9,9 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct PlayerRow: View {
+    let match: Match
     @Bindable var matchPlayer: MatchPlayer
     let isMatchEnded: Bool
-    @Binding var now: Date  // <- pass as binding
+    @Binding var now: Date
 
     var body: some View {
         HStack {
@@ -23,18 +24,16 @@ struct PlayerRow: View {
                     .foregroundColor(.secondary)
             }
             Spacer()
-            Button(matchPlayer.isOnField ? "Sub Out" : "Sub In") {
-                toggleSub()
-            }
-            .buttonStyle(.bordered)
-            .disabled(isMatchEnded)
+            Button(matchPlayer.isOnField ? "Sub Out" : "Sub In") { toggleSub() }
+                .buttonStyle(.bordered)
+                .disabled(isMatchEnded)
         }
         .padding(.vertical, 4)
         .opacity(isMatchEnded ? 0.5 : 1.0)
     }
 
     private var timeString: String {
-        let seconds = matchPlayer.secondsPlayed(at: now)
+        let seconds = matchPlayer.secondsPlayed(match: match, at: now)
         let minutes = Int(seconds / 60)
         let secs = Int(seconds) % 60
         return String(format: "%02d:%02d", minutes, secs)
@@ -42,15 +41,12 @@ struct PlayerRow: View {
 
     private func toggleSub() {
         let current = now
+
         if matchPlayer.isOnField {
-            if let lastIn = matchPlayer.lastSubInTime {
-                matchPlayer.totalSecondsPlayed += current.timeIntervalSince(lastIn)
-            }
-            matchPlayer.isOnField = false
-            matchPlayer.lastSubInTime = nil
+            match.subOut(player: matchPlayer, at: current)
         } else {
-            matchPlayer.isOnField = true
-            matchPlayer.lastSubInTime = current
+            match.subIn(player: matchPlayer, at: current)
         }
     }
+
 }

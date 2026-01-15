@@ -9,32 +9,33 @@ import SwiftData
 import SwiftUI
 
 @Model
-class MatchPlayer{
+class MatchPlayer {
     var player: Player
     var totalSecondsPlayed: TimeInterval = 0
     var isOnField: Bool = false
     var lastSubInTime: Date?
-    
-    init(player: Player){
+
+    init(player: Player) {
         self.player = player
     }
-    
-    func secondsPlayed(at now: Date) -> TimeInterval {
-            if isOnField, let lastIn = lastSubInTime {
-                return totalSecondsPlayed + now.timeIntervalSince(lastIn)
-            } else {
-                return totalSecondsPlayed
-            }
+
+    // Compute seconds including current on-field time
+    func secondsPlayed(match: Match, at now: Date) -> TimeInterval {
+        var total = totalSecondsPlayed
+        if isOnField, let lastIn = lastSubInTime {
+            total += match.effectiveNow(at: now).timeIntervalSince(lastIn)
         }
-    
+        return total
+    }
 }
 
 extension MatchPlayer {
     func isUnderplayed(
+        match: Match,
         at now: Date,
         comparedTo average: TimeInterval,
         threshold: TimeInterval = 60
     ) -> Bool {
-        secondsPlayed(at: now) + threshold < average
+        secondsPlayed(match: match, at: now) + threshold < average
     }
 }
