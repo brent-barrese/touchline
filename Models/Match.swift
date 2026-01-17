@@ -90,8 +90,8 @@ class Match {
     func subIn(player: MatchPlayer, at now: Date) {
         guard !player.isOnField else { return }
         player.isOnField = true
-        // Only start the timer if play has actually started
-        if hasStartedPlay {
+
+        if hasStartedPlay && !isPaused {
             player.lastSubInTime = now
         } else {
             player.lastSubInTime = nil

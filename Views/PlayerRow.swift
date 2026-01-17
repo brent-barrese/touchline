@@ -33,7 +33,8 @@ struct PlayerRow: View {
     }
 
     private var timeString: String {
-        let seconds = matchPlayer.secondsPlayed(match: match, at: now)
+        let rawSeconds = matchPlayer.secondsPlayed(match: match, at: now)
+        let seconds = max(0, rawSeconds)   // never show negative time
         let minutes = Int(seconds / 60)
         let secs = Int(seconds) % 60
         return String(format: "%02d:%02d", minutes, secs)
@@ -48,5 +49,4 @@ struct PlayerRow: View {
             match.subIn(player: matchPlayer, at: current)
         }
     }
-
 }
