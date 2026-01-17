@@ -23,6 +23,9 @@
 		D5E7E51B2F0F78920013F986 /* MatchHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E51A2F0F78860013F986 /* MatchHistoryView.swift */; };
 		D5E7E51D2F0F78B20013F986 /* MatchSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E51C2F0F78AE0013F986 /* MatchSummaryView.swift */; };
 		D5E7E5212F1049F00013F986 /* PlayerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E5202F1049EC0013F986 /* PlayerRow.swift */; };
+		D5E801922F1BEDA70063B745 /* MatchEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E801912F1BED9B0063B745 /* MatchEventType.swift */; };
+		D5E801942F1BEDE30063B745 /* MatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E801932F1BEDE00063B745 /* MatchEvent.swift */; };
+		D5E801962F1BF09B0063B745 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E801952F1BF0990063B745 /* Position.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +46,9 @@
 		D5E7E51A2F0F78860013F986 /* MatchHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchHistoryView.swift; sourceTree = "<group>"; };
 		D5E7E51C2F0F78AE0013F986 /* MatchSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSummaryView.swift; sourceTree = "<group>"; };
 		D5E7E5202F1049EC0013F986 /* PlayerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerRow.swift; sourceTree = "<group>"; };
+		D5E801912F1BED9B0063B745 /* MatchEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchEventType.swift; sourceTree = "<group>"; };
+		D5E801932F1BEDE00063B745 /* MatchEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchEvent.swift; sourceTree = "<group>"; };
+		D5E801952F1BF0990063B745 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -86,6 +92,9 @@
 		D5E7E5032F0CFE650013F986 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D5E801952F1BF0990063B745 /* Position.swift */,
+				D5E801932F1BEDE00063B745 /* MatchEvent.swift */,
+				D5E801912F1BED9B0063B745 /* MatchEventType.swift */,
 				D55670B82F15D9ED0019DC8B /* MatchPauseReason.swift */,
 				D55670B62F140F920019DC8B /* SportType.swift */,
 				D5E7E50E2F0F39540013F986 /* Match.swift */,
@@ -192,15 +201,18 @@
 				D5E7E4E82F0CF0770013F986 /* ContentView.swift in Sources */,
 				D5E7E4F12F0CF5E20013F986 /* MatchView.swift in Sources */,
 				D5E7E5132F0F60210013F986 /* MatchSetupView.swift in Sources */,
+				D5E801942F1BEDE30063B745 /* MatchEvent.swift in Sources */,
 				D5E7E5172F0F641B0013F986 /* TimeFormatter.swift in Sources */,
 				D55670B92F15D9F20019DC8B /* MatchPauseReason.swift in Sources */,
 				D5E7E5212F1049F00013F986 /* PlayerRow.swift in Sources */,
 				D5E7E4FC2F0CFCEB0013F986 /* AddPlayerView.swift in Sources */,
 				D5E7E51B2F0F78920013F986 /* MatchHistoryView.swift in Sources */,
+				D5E801962F1BF09B0063B745 /* Position.swift in Sources */,
 				D5E7E5192F0F71B80013F986 /* SubSuggestionsView.swift in Sources */,
 				D5E7E4F62F0CF8BE0013F986 /* Player.swift in Sources */,
 				D5E7E5152F0F61760013F986 /* MatchClockView.swift in Sources */,
 				D5E7E4EE2F0CF5CE0013F986 /* PlayersView.swift in Sources */,
+				D5E801922F1BEDA70063B745 /* MatchEventType.swift in Sources */,
 				D55670B72F140F9A0019DC8B /* SportType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -17,6 +17,9 @@ class Match {
 
     @Relationship(deleteRule: .cascade)
     var matchPlayers: [MatchPlayer] = []
+    
+    @Relationship(deleteRule: .cascade)
+    var events: [MatchEvent] = []
 
     var pausedAt: Date?
     var totalPausedSeconds: TimeInterval = 0
@@ -130,6 +133,40 @@ class Match {
             let mins = Int(seconds / 60)
             let secs = Int(seconds) % 60
             return String(format: "%02d:%02d", mins, secs)
+        }
+    
+        func addGoal(for player: Player, at now: Date) {
+            let ts = elapsedSeconds(at: now)
+            events.append(
+                MatchEvent(type: MatchEventType.goal, timestamp: ts, player: player)
+            )
+        }
+        
+        func addOpponentGoal(at now: Date) {
+            let ts = elapsedSeconds(at: now)
+            events.append(
+                MatchEvent(type: MatchEventType.opponentGoal, timestamp: ts)
+            )
+        }
+        
+        func changePosition(
+            for mp: MatchPlayer,
+            to newPosition: Position,
+            at now: Date
+        ) {
+            let ts = elapsedSeconds(at: now)
+
+            events.append(
+                MatchEvent(
+                    type: .positionChange,
+                    timestamp: ts,
+                    player: mp.player,
+                    fromPosition: mp.currentPosition,
+                    toPosition: newPosition
+                )
+            )
+
+            mp.currentPosition = newPosition
         }
 }
 

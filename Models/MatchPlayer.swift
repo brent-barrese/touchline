@@ -14,6 +14,7 @@ class MatchPlayer {
     var totalSecondsPlayed: TimeInterval = 0
     var isOnField: Bool = false
     var lastSubInTime: Date?
+    var currentPosition: Position?
 
     init(player: Player) {
         self.player = player
