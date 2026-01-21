@@ -22,11 +22,32 @@ struct PlayerRow: View {
                 Text(timeString)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                if let position = matchPlayer.currentPosition {
+                    Text(position.rawValue.capitalized)
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                } else {
+                    Text("No position")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             Spacer()
             Button(matchPlayer.isOnField ? "Sub Out" : "Sub In") { toggleSub() }
                 .buttonStyle(.bordered)
                 .disabled(isMatchEnded)
+            Menu("Position") {
+                ForEach(Position.allCases, id: \.self) { pos in
+                    Button(pos.rawValue.capitalized) {
+                        match.changePosition(
+                            for: matchPlayer,
+                            to: pos,
+                            at: now
+                        )
+                    }
+                }
+            }
+            .disabled(!matchPlayer.isOnField || isMatchEnded)
         }
         .padding(.vertical, 4)
         .opacity(isMatchEnded ? 0.5 : 1.0)

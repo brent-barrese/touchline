@@ -131,19 +131,27 @@ struct MatchView: View {
         timerCancellable?.cancel()
         timerCancellable = nil
     }
-
+    
     private func endMatch() {
-        let end = now
-
-        for mp in match.matchPlayers where mp.isOnField {
-            if let lastIn = mp.lastSubInTime {
-                mp.totalSecondsPlayed += match.effectiveNow(at: end).timeIntervalSince(lastIn)
-            }
-            mp.isOnField = false
-            mp.lastSubInTime = nil
+        match.end(at: now)
+        
+        // 🔍 DEBUG — remove later
+        print("=== MATCH EVENTS ===")
+        for event in match.events {
+            print(
+                event.type.rawValue,
+                "player:",
+                event.player?.name ?? "-",
+                "from:",
+                event.fromPosition as Any,
+                "to:",
+                event.toPosition as Any,
+                "@",
+                event.timestamp
+            )
         }
-
-        match.endTime = end
+        print("====================")
+        
         stopTimer()
         onMatchEnded?()
     }

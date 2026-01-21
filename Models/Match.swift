@@ -112,62 +112,76 @@ class Match {
     
     // debuggin - delete later
     func debugStatus(at now: Date) {
-            let mainClock = elapsedSeconds(at: now)
-            print("=== Match Debug Status ===")
-            print("Match: \(name)")
-            print("Has Started Play: \(hasStartedPlay)")
-            print("Play Started At: \(String(describing: playStartedAt))")
-            print("Paused At: \(String(describing: pausedAt))")
-            print("Total Paused Seconds: \(totalPausedSeconds)")
-            print("Main Clock: \(formatTime(mainClock))")
-            print("Players:")
+        let mainClock = elapsedSeconds(at: now)
+        print("=== Match Debug Status ===")
+        print("Match: \(name)")
+        print("Has Started Play: \(hasStartedPlay)")
+        print("Play Started At: \(String(describing: playStartedAt))")
+        print("Paused At: \(String(describing: pausedAt))")
+        print("Total Paused Seconds: \(totalPausedSeconds)")
+        print("Main Clock: \(formatTime(mainClock))")
+        print("Players:")
 
-            for mp in matchPlayers {
-                let playerTime = mp.secondsPlayed(match: self, at: now)
-                print(" - \(mp.player.name): isOnField=\(mp.isOnField), lastSubInTime=\(String(describing: mp.lastSubInTime)), totalSecondsPlayed=\(mp.totalSecondsPlayed), secondsPlayed(now)=\(formatTime(playerTime))")
-            }
-            print("==========================\n")
+        for mp in matchPlayers {
+            let playerTime = mp.secondsPlayed(match: self, at: now)
+            print(" - \(mp.player.name): isOnField=\(mp.isOnField), lastSubInTime=\(String(describing: mp.lastSubInTime)), totalSecondsPlayed=\(mp.totalSecondsPlayed), secondsPlayed(now)=\(formatTime(playerTime))")
         }
+        print("==========================\n")
+    }
 
-        private func formatTime(_ seconds: TimeInterval) -> String {
-            let mins = Int(seconds / 60)
-            let secs = Int(seconds) % 60
-            return String(format: "%02d:%02d", mins, secs)
-        }
+    private func formatTime(_ seconds: TimeInterval) -> String {
+        let mins = Int(seconds / 60)
+        let secs = Int(seconds) % 60
+        return String(format: "%02d:%02d", mins, secs)
+    }
+
+    func addGoal(for player: Player, at now: Date) {
+        let ts = elapsedSeconds(at: now)
+        events.append(
+            MatchEvent(type: MatchEventType.goal, timestamp: ts, player: player)
+        )
+    }
     
-        func addGoal(for player: Player, at now: Date) {
-            let ts = elapsedSeconds(at: now)
-            events.append(
-                MatchEvent(type: MatchEventType.goal, timestamp: ts, player: player)
-            )
-        }
-        
-        func addOpponentGoal(at now: Date) {
-            let ts = elapsedSeconds(at: now)
-            events.append(
-                MatchEvent(type: MatchEventType.opponentGoal, timestamp: ts)
-            )
-        }
-        
-        func changePosition(
-            for mp: MatchPlayer,
-            to newPosition: Position,
-            at now: Date
-        ) {
-            let ts = elapsedSeconds(at: now)
+    func addOpponentGoal(at now: Date) {
+        let ts = elapsedSeconds(at: now)
+        events.append(
+            MatchEvent(type: MatchEventType.opponentGoal, timestamp: ts)
+        )
+    }
+    
+    func changePosition(
+        for mp: MatchPlayer,
+        to newPosition: Position,
+        at now: Date
+    ) {
+        let ts = elapsedSeconds(at: now)
 
-            events.append(
-                MatchEvent(
-                    type: .positionChange,
-                    timestamp: ts,
-                    player: mp.player,
-                    fromPosition: mp.currentPosition,
-                    toPosition: newPosition
-                )
+        events.append(
+            MatchEvent(
+                type: .positionChange,
+                timestamp: ts,
+                player: mp.player,
+                fromPosition: mp.currentPosition,
+                toPosition: newPosition
             )
+        )
 
-            mp.currentPosition = newPosition
+        mp.currentPosition = newPosition
+    }
+    
+    func end(at now: Date) {
+        let effectiveEnd = effectiveNow(at: now)
+
+        for mp in matchPlayers where mp.isOnField {
+            if let lastIn = mp.lastSubInTime {
+                mp.totalSecondsPlayed += effectiveEnd.timeIntervalSince(lastIn)
+            }
+            mp.isOnField = false
+            mp.lastSubInTime = nil
         }
+
+        endTime = now
+    }
 }
 
 extension Match {
