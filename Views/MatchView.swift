@@ -19,101 +19,62 @@ struct MatchView: View {
 
     var body: some View {
         VStack {
-            Text(match.name)
-                .font(.title2)
-                .bold()
-                .padding(.top)
-
-            if !match.isEnded {
-                if match.isPaused {
-                    Button { match.resume(at: now) } label: {
-                        Label("Resume", systemImage: "play.fill")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.green)
-                    .padding(.horizontal)
-
-                    if let reason = match.pauseReason {
-                        Text(reason == .halftime ? "Halftime" : "Paused")
-                            .font(.headline)
-                            .foregroundColor(.orange)
-                            .padding(.bottom, 4)
-                    }
-                } else {
-                    // Pause / Halftime buttons
-                    HStack {
-                        if match.hasStartedPlay {
-                            Button { match.startHalftime(at: now) } label: {
-                                Label("Halftime", systemImage: "pause.circle")
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.blue)
-                            .disabled(match.hasHadHalftime)
-                            .opacity(match.hasHadHalftime ? 0.4 : 1.0)
-
-                            Button { match.pause(at: now) } label: {
-                                Label("Pause", systemImage: "pause.fill")
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Start Play Button
-            if !match.hasStartedPlay && !match.isEnded {
-                Button {
+            ScoreboardHeader(
+                match: match,
+                now: now,
+                onStartPlay: {
                     let kickoff = Date()
                     match.playStartedAt = kickoff
                     match.totalPausedSeconds = 0
                     match.pausedAt = nil
 
-                    // Initialize players on field
                     for mp in match.matchPlayers where mp.isOnField {
                         mp.lastSubInTime = kickoff
                     }
 
                     now = kickoff
-                } label: {
-                    Label("Start Play", systemImage: "play.circle.fill")
+                },
+                onPause: {
+                    match.pause(at: now)
+                },
+                onResume: {
+                    match.resume(at: now)
+                },
+                onHalftime: {
+                    match.startHalftime(at: now)
+                },
+                onEndMatch: {
+                    guard !match.isEnded else { return }
+                    showEndConfirmation = true
                 }
-            }
-
-            MatchClockView(elapsedSeconds: match.elapsedSeconds(at: now))
-                .opacity(match.isEnded ? 0.5 : 1.0)
-
-            if !match.isEnded && !match.isPaused {
-                SubSuggestionsView(match: match, now: now)
-            }
-
-            Button(role: .destructive) {
-                showEndConfirmation = true
-            } label: {
-                Text("End Match")
-                    .frame(maxWidth: .infinity)
-            }
-            .padding(.horizontal)
-            .disabled(match.isEnded)
-            
-            // opponent goal - CHECK POSITION
-            Button {
-                match.addOpponentGoal(at: now)
-            } label: {
-                Label("Opponent Goal", systemImage: "minus.circle")
-            }
-            .buttonStyle(.bordered)
-            .tint(.red)
-
-            // Players
+            )
             List {
+                // sub suggestions
+                if !match.isEnded && !match.isPaused {
+                    SubSuggestionsView(match: match, now: now)
+                }
+                
+                // on field
                 Section("On the Field") {
                     ForEach(match.matchPlayers.filter { $0.isOnField }) { mp in
-                        PlayerRow(match: match, matchPlayer: mp, isMatchEnded: match.isEnded, now: $now)
+                        PlayerRow(
+                            match: match,
+                            matchPlayer: mp,
+                            isMatchEnded: match.isEnded,
+                            now: $now
+                        )
                     }
                 }
+                
+                // on bench
                 Section("Bench") {
                     ForEach(match.matchPlayers.filter { !$0.isOnField }) { mp in
-                        PlayerRow(match: match, matchPlayer: mp, isMatchEnded: match.isEnded, now: $now)
+                        PlayerRow(
+                            match: match,
+                            matchPlayer: mp,
+                            isMatchEnded: match.isEnded,
+                            now: $now
+                        )
                     }
                 }
             }
@@ -142,6 +103,8 @@ struct MatchView: View {
     }
     
     private func endMatch() {
+        guard !match.isEnded else { return }
+        
         match.end(at: now)
         
         // 🔍 DEBUG — remove later

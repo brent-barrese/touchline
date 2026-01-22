@@ -20,14 +20,11 @@ class Match {
     
     @Relationship(deleteRule: .cascade)
     var events: [MatchEvent] = []
-
     var pausedAt: Date?
     var totalPausedSeconds: TimeInterval = 0
     var pauseReason: MatchPauseReason?
-
     var playStartedAt: Date?
     var hasHadHalftime: Bool = false
-
     var isEnded: Bool { endTime != nil }
     var isPaused: Bool { pausedAt != nil }
     var hasStartedPlay: Bool { playStartedAt != nil }
@@ -139,11 +136,14 @@ class Match {
     }
 
     func addGoal(for player: Player, at now: Date) {
+        guard hasStartedPlay, !isEnded else { return }
+        
         let ts = elapsedSeconds(at: now)
         events.append(MatchEvent(type: .goal, timestamp: ts, player: player))
     }
     
     func addOpponentGoal(at now: Date) {
+        guard hasStartedPlay else { return }
         let ts = elapsedSeconds(at: now)
         events.append(MatchEvent(type: .opponentGoal, timestamp: ts))
     }
@@ -180,6 +180,13 @@ class Match {
         }
 
         endTime = effectiveEnd // was a bug and was at just `now`
+    }
+    
+    func removeLastOpponentGoal() {
+        guard let index = events.lastIndex(where: { $0.type == .opponentGoal }) else {
+            return
+        }
+        events.remove(at: index)
     }
     
 }

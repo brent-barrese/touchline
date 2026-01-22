@@ -26,6 +26,7 @@
 		D5E801922F1BEDA70063B745 /* MatchEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E801912F1BED9B0063B745 /* MatchEventType.swift */; };
 		D5E801942F1BEDE30063B745 /* MatchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E801932F1BEDE00063B745 /* MatchEvent.swift */; };
 		D5E801962F1BF09B0063B745 /* Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E801952F1BF0990063B745 /* Position.swift */; };
+		D5EF27A02F21DA2D0031E93E /* ScoreboardHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EF279F2F21DA250031E93E /* ScoreboardHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		D5E801912F1BED9B0063B745 /* MatchEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchEventType.swift; sourceTree = "<group>"; };
 		D5E801932F1BEDE00063B745 /* MatchEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchEvent.swift; sourceTree = "<group>"; };
 		D5E801952F1BF0990063B745 /* Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Position.swift; sourceTree = "<group>"; };
+		D5EF279F2F21DA250031E93E /* ScoreboardHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreboardHeader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -107,6 +109,7 @@
 		D5E7E5052F0CFE7C0013F986 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D5EF279F2F21DA250031E93E /* ScoreboardHeader.swift */,
 				D5E7E4FA2F0CFCE40013F986 /* AddPlayerView.swift */,
 				D5E7E4E52F0CF0770013F986 /* ContentView.swift */,
 				D5E7E5142F0F61720013F986 /* MatchClockView.swift */,
@@ -205,6 +208,7 @@
 				D5E7E5172F0F641B0013F986 /* TimeFormatter.swift in Sources */,
 				D55670B92F15D9F20019DC8B /* MatchPauseReason.swift in Sources */,
 				D5E7E5212F1049F00013F986 /* PlayerRow.swift in Sources */,
+				D5EF27A02F21DA2D0031E93E /* ScoreboardHeader.swift in Sources */,
 				D5E7E4FC2F0CFCEB0013F986 /* AddPlayerView.swift in Sources */,
 				D5E7E51B2F0F78920013F986 /* MatchHistoryView.swift in Sources */,
 				D5E801962F1BF09B0063B745 /* Position.swift in Sources */,

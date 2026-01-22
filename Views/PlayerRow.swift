@@ -13,6 +13,7 @@ struct PlayerRow: View {
     @Bindable var matchPlayer: MatchPlayer
     let isMatchEnded: Bool
     @Binding var now: Date
+    @State private var animateGoal = false
 
     var body: some View {
         HStack {
@@ -51,14 +52,26 @@ struct PlayerRow: View {
                 .buttonStyle(.bordered)
                 .disabled(isMatchEnded)
             
-            // player goal - CHECK POSITION
+            // player goal
             if matchPlayer.isOnField && !isMatchEnded {
                 Button {
                     match.addGoal(for: matchPlayer.player, at: now)
                 } label: {
                     Image(systemName: "soccerball")
+                        .scaleEffect(animateGoal ? 1.15 : 1.0)
+                        .foregroundColor(animateGoal ? .green : .primary)
+                        .animation(.easeOut(duration: 0.25), value: animateGoal)
                 }
+                .disabled(!match.hasStartedPlay || match.isEnded)
+                .opacity(!match.hasStartedPlay ? 0.4 : 1.0)
                 .buttonStyle(.bordered)
+                .onChange(of: match.goals(for: matchPlayer.player)) {
+                    animateGoal = true
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        animateGoal = false
+                    }
+                }
             }
             
             Menu("Position") {
