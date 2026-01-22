@@ -22,6 +22,33 @@ struct MatchSummaryView: View {
                     }
                 }
             }
+            
+            Section("Score") {
+                HStack {
+                    Text("Us")
+                    Spacer()
+                    Text("\(match.goalsFor)")
+                }
+
+                HStack {
+                    Text("Opponent")
+                    Spacer()
+                    Text("\(match.goalsAgainst)")
+                }
+            }
+            
+            Section("Goals") {
+                ForEach(match.matchPlayers) { mp in
+                    let count = match.goals(for: mp.player)
+                    if count > 0 {
+                        HStack {
+                            Text(mp.player.name)
+                            Spacer()
+                            Text("\(count)")
+                        }
+                    }
+                }
+            }
         }
         .navigationTitle(match.startTime.formatted(date: .abbreviated, time: .shortened))
     }

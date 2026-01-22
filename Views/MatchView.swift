@@ -94,6 +94,15 @@ struct MatchView: View {
             }
             .padding(.horizontal)
             .disabled(match.isEnded)
+            
+            // opponent goal - CHECK POSITION
+            Button {
+                match.addOpponentGoal(at: now)
+            } label: {
+                Label("Opponent Goal", systemImage: "minus.circle")
+            }
+            .buttonStyle(.bordered)
+            .tint(.red)
 
             // Players
             List {

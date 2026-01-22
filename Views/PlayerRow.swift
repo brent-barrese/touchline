@@ -19,9 +19,23 @@ struct PlayerRow: View {
             VStack(alignment: .leading) {
                 Text(matchPlayer.player.name)
                     .bold()
-                Text(timeString)
+                
+                Text(formatTime(totalSeconds))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+
+                if matchPlayer.isOnField {
+                    Text("On Field: \(formatTime(stintSeconds))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                if !matchPlayer.isOnField {
+                    Text("On Bench: \(formatTime(benchSeconds))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
                 if let position = matchPlayer.currentPosition {
                     Text(position.rawValue.capitalized)
                         .font(.caption)
@@ -36,6 +50,17 @@ struct PlayerRow: View {
             Button(matchPlayer.isOnField ? "Sub Out" : "Sub In") { toggleSub() }
                 .buttonStyle(.bordered)
                 .disabled(isMatchEnded)
+            
+            // player goal - CHECK POSITION
+            if matchPlayer.isOnField && !isMatchEnded {
+                Button {
+                    match.addGoal(for: matchPlayer.player, at: now)
+                } label: {
+                    Image(systemName: "soccerball")
+                }
+                .buttonStyle(.bordered)
+            }
+            
             Menu("Position") {
                 ForEach(Position.allCases, id: \.self) { pos in
                     Button(pos.rawValue.capitalized) {
@@ -52,10 +77,20 @@ struct PlayerRow: View {
         .padding(.vertical, 4)
         .opacity(isMatchEnded ? 0.5 : 1.0)
     }
+    
+    private var totalSeconds: TimeInterval {
+        max(0, matchPlayer.secondsPlayed(match: match, at: now))
+    }
 
-    private var timeString: String {
-        let rawSeconds = matchPlayer.secondsPlayed(match: match, at: now)
-        let seconds = max(0, rawSeconds)   // never show negative time
+    private var stintSeconds: TimeInterval {
+        max(0, matchPlayer.currentStintSeconds(match: match, at: now))
+    }
+    
+    private var benchSeconds: TimeInterval {
+        max(0, matchPlayer.benchSeconds(match: match, at: now))
+    }
+    
+    private func formatTime(_ seconds: TimeInterval) -> String {
         let minutes = Int(seconds / 60)
         let secs = Int(seconds) % 60
         return String(format: "%02d:%02d", minutes, secs)

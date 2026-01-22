@@ -89,10 +89,11 @@ class Match {
         resume(at: now)
     }
 
-    // MARK: - Sub in/out
     func subIn(player: MatchPlayer, at now: Date) {
         guard !player.isOnField else { return }
+        
         player.isOnField = true
+        player.lastSubOutTime = nil
 
         if hasStartedPlay && !isPaused {
             player.lastSubInTime = now
@@ -103,11 +104,13 @@ class Match {
 
     func subOut(player: MatchPlayer, at now: Date) {
         guard player.isOnField else { return }
+        
         if let lastIn = player.lastSubInTime {
             player.totalSecondsPlayed += now.timeIntervalSince(lastIn)
         }
         player.isOnField = false
         player.lastSubInTime = nil
+        player.lastSubOutTime = now
     }
     
     // debuggin - delete later
@@ -137,16 +140,12 @@ class Match {
 
     func addGoal(for player: Player, at now: Date) {
         let ts = elapsedSeconds(at: now)
-        events.append(
-            MatchEvent(type: MatchEventType.goal, timestamp: ts, player: player)
-        )
+        events.append(MatchEvent(type: .goal, timestamp: ts, player: player))
     }
     
     func addOpponentGoal(at now: Date) {
         let ts = elapsedSeconds(at: now)
-        events.append(
-            MatchEvent(type: MatchEventType.opponentGoal, timestamp: ts)
-        )
+        events.append(MatchEvent(type: .opponentGoal, timestamp: ts))
     }
     
     func changePosition(
@@ -180,8 +179,9 @@ class Match {
             mp.lastSubInTime = nil
         }
 
-        endTime = now
+        endTime = effectiveEnd // was a bug and was at just `now`
     }
+    
 }
 
 extension Match {
@@ -193,5 +193,19 @@ extension Match {
             partialResult + mp.secondsPlayed(match: self, at: now)
         }
         return total / Double(onFieldPlayers.count)
+    }
+    
+    var goalsFor: Int {
+        events.filter { $0.type == .goal }.count
+    }
+
+    var goalsAgainst: Int {
+        events.filter { $0.type == .opponentGoal }.count
+    }
+
+    func goals(for player: Player) -> Int {
+        events.filter {
+            $0.type == .goal && $0.player == player
+        }.count
     }
 }
