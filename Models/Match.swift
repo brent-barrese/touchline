@@ -26,7 +26,7 @@ class Match {
     var playStartedAt: Date?
     var hasHadHalftime: Bool = false
     var isEnded: Bool { endTime != nil }
-    var isPaused: Bool { pausedAt != nil }
+    var isPaused: Bool { pausedAt != nil && endTime == nil }
     var hasStartedPlay: Bool { playStartedAt != nil }
 
     init(name: String, players: [Player], sport: SportType = .soccer) {
@@ -47,30 +47,15 @@ class Match {
         return now.timeIntervalSince(playStarted) - paused
     }
 
-    func effectiveNow(at now: Date) -> Date {
-        pausedAt ?? endTime ?? now
-    }
-
     func pause(at now: Date) {
         guard pausedAt == nil else { return }
         pausedAt = now
-
-        for mp in matchPlayers where mp.isOnField {
-            if let lastIn = mp.lastSubInTime {
-                mp.totalSecondsPlayed += now.timeIntervalSince(lastIn)
-                mp.lastSubInTime = nil
-            }
-        }
     }
 
     func resume(at now: Date) {
         guard let pausedAt else { return }
         totalPausedSeconds += now.timeIntervalSince(pausedAt)
         self.pausedAt = nil
-
-        for mp in matchPlayers where mp.isOnField {
-            mp.lastSubInTime = now
-        }
     }
 
     func startHalftime(at now: Date) {
@@ -85,29 +70,49 @@ class Match {
         pauseReason = nil
         resume(at: now)
     }
+    
+    func startPlay(at now: Date) {
+        playStartedAt = now
+        totalPausedSeconds = 0
+        pausedAt = nil
+
+        for mp in matchPlayers {
+            if mp.isOnField {
+                mp.lastSubInMatchSeconds = 0
+                mp.lastSubOutMatchSeconds = nil
+            } else {
+                mp.lastSubOutMatchSeconds = 0
+                mp.lastSubInMatchSeconds = nil
+            }
+        }
+    }
 
     func subIn(player: MatchPlayer, at now: Date) {
         guard !player.isOnField else { return }
-        
-        player.isOnField = true
-        player.lastSubOutTime = nil
 
-        if hasStartedPlay && !isPaused {
-            player.lastSubInTime = now
-        } else {
-            player.lastSubInTime = nil
-        }
+        player.isOnField = true
+        player.lastSubOutMatchSeconds = nil
+
+        let matchSeconds = isPaused
+            ? elapsedSeconds(at: pausedAt!)
+            : elapsedSeconds(at: now)
+        player.lastSubInMatchSeconds = matchSeconds
     }
 
     func subOut(player: MatchPlayer, at now: Date) {
         guard player.isOnField else { return }
-        
-        if let lastIn = player.lastSubInTime {
-            player.totalSecondsPlayed += now.timeIntervalSince(lastIn)
+
+        let matchSeconds = isPaused
+            ? elapsedSeconds(at: pausedAt!)
+            : elapsedSeconds(at: now)
+
+        if let last = player.lastSubInMatchSeconds {
+            player.totalSecondsPlayed += matchSeconds - last
         }
+
         player.isOnField = false
-        player.lastSubInTime = nil
-        player.lastSubOutTime = now
+        player.lastSubInMatchSeconds = nil
+        player.lastSubOutMatchSeconds = matchSeconds
     }
     
     // debuggin - delete later
@@ -124,7 +129,13 @@ class Match {
 
         for mp in matchPlayers {
             let playerTime = mp.secondsPlayed(match: self, at: now)
-            print(" - \(mp.player.name): isOnField=\(mp.isOnField), lastSubInTime=\(String(describing: mp.lastSubInTime)), totalSecondsPlayed=\(mp.totalSecondsPlayed), secondsPlayed(now)=\(formatTime(playerTime))")
+            print(
+                " - \(mp.player.name):",
+                "isOnField=\(mp.isOnField)",
+                "lastSubInMatchSeconds=\(String(describing: mp.lastSubInMatchSeconds))",
+                "totalSecondsPlayed=\(mp.totalSecondsPlayed)",
+                "secondsPlayed(now)=\(formatTime(playerTime))"
+            )
         }
         print("==========================\n")
     }
@@ -169,17 +180,20 @@ class Match {
     }
     
     func end(at now: Date) {
-        let effectiveEnd = effectiveNow(at: now)
+        let endMatchSeconds = elapsedSeconds(at: now)
 
         for mp in matchPlayers where mp.isOnField {
-            if let lastIn = mp.lastSubInTime {
-                mp.totalSecondsPlayed += effectiveEnd.timeIntervalSince(lastIn)
+            if let last = mp.lastSubInMatchSeconds {
+                mp.totalSecondsPlayed += endMatchSeconds - last
             }
             mp.isOnField = false
-            mp.lastSubInTime = nil
+            mp.lastSubInMatchSeconds = nil
+            mp.lastSubOutMatchSeconds = endMatchSeconds
         }
 
-        endTime = effectiveEnd // was a bug and was at just `now`
+        pausedAt = nil
+        pauseReason = nil
+        endTime = now
     }
     
     func removeLastOpponentGoal() {

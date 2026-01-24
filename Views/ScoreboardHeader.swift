@@ -20,40 +20,41 @@ struct ScoreboardHeader: View {
     @State private var animateAgainst = false
 
     var body: some View {
-        VStack(spacing: 12) {
-            // match name
+        VStack(spacing: 8) {
+            // Match name
             Text(match.name)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            // Clock
+            // Clock (smaller, centered above the scores)
             Text(formatTime(match.elapsedSeconds(at: now)))
-                .font(.system(size: 28, weight: .semibold, design: .rounded))
+                .font(.system(size: 22, weight: .medium, design: .rounded))
                 .monospacedDigit()
-                .opacity(match.isEnded ? 0.4 : 1)
+                .opacity(match.isEnded ? 0.4 : 1.0)
 
             // Score row
-            HStack(spacing: 24) {
+            HStack(alignment: .bottom, spacing: 20) {
 
                 // US
-                VStack(spacing: 4) {
+                VStack(spacing: 2) {
                     Text("US")
                         .font(.caption)
                         .foregroundColor(.secondary)
 
                     Text("\(match.goalsFor)")
-                        .font(.system(size: 34, weight: .semibold, design: .rounded)) // score sizing -> tweak or remove as needed
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundColor(animateFor ? .green : .primary)
                         .scaleEffect(animateFor ? 1.15 : 1.0)
                         .animation(.easeOut(duration: 0.25), value: animateFor)
                 }
 
                 Text("–")
-                    .font(.title2)
+                    .font(.title)
                     .foregroundColor(.secondary)
+                    .padding(.bottom, 4)
 
                 // OPP + / -
-                VStack(spacing: 4) {
+                VStack(spacing: 2) {
                     Text("OPP")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -64,12 +65,11 @@ struct ScoreboardHeader: View {
                         } label: {
                             Image(systemName: "minus.circle")
                         }
-                        .disabled(!match.hasStartedPlay)
-                        .disabled(match.goalsAgainst == 0)
+                        .disabled(!match.hasStartedPlay || match.goalsAgainst == 0)
                         .opacity(!match.hasStartedPlay ? 0.4 : 1.0)
 
                         Text("\(match.goalsAgainst)")
-                            .font(.system(size: 34, weight: .semibold, design: .rounded)) // score sizing -> tweak or remove as needed
+                            .font(.system(size: 36, weight: .bold, design: .rounded))
                             .foregroundColor(animateAgainst ? .red : .primary)
                             .scaleEffect(animateAgainst ? 1.15 : 1.0)
                             .animation(.easeOut(duration: 0.25), value: animateAgainst)
@@ -87,7 +87,6 @@ struct ScoreboardHeader: View {
 
             // Match controls
             HStack(spacing: 12) {
-
                 if !match.hasStartedPlay && !match.isEnded {
                     Button(action: onStartPlay) {
                         Label("Start", systemImage: "play.fill")
@@ -111,7 +110,7 @@ struct ScoreboardHeader: View {
                         Label("Halftime", systemImage: "pause.circle")
                     }
                     .disabled(match.hasHadHalftime)
-                    .opacity(match.hasHadHalftime ? 0.4 : 1)
+                    .opacity(match.hasHadHalftime ? 0.4 : 1.0)
                 }
 
                 Spacer()

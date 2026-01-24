@@ -24,14 +24,7 @@ struct MatchView: View {
                 now: now,
                 onStartPlay: {
                     let kickoff = Date()
-                    match.playStartedAt = kickoff
-                    match.totalPausedSeconds = 0
-                    match.pausedAt = nil
-
-                    for mp in match.matchPlayers where mp.isOnField {
-                        mp.lastSubInTime = kickoff
-                    }
-
+                    match.startPlay(at: kickoff)
                     now = kickoff
                 },
                 onPause: {

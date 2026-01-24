@@ -13,21 +13,21 @@ class MatchPlayer {
     var player: Player
     var totalSecondsPlayed: TimeInterval = 0
     var isOnField: Bool = false
-    var lastSubInTime: Date?
+    var lastSubInMatchSeconds: TimeInterval?
+    var lastSubOutMatchSeconds: TimeInterval?
     var currentPosition: Position?
-    var lastSubOutTime: Date?
-
 
     init(player: Player) {
         self.player = player
     }
 
-    // Compute seconds including current on-field time
     func secondsPlayed(match: Match, at now: Date) -> TimeInterval {
         var total = totalSecondsPlayed
-        if isOnField, let lastIn = lastSubInTime {
-            total += match.effectiveNow(at: now).timeIntervalSince(lastIn)
+
+        if isOnField, let last = lastSubInMatchSeconds {
+            total += match.elapsedSeconds(at: now) - last
         }
+
         return total
     }
 }
@@ -44,16 +44,12 @@ extension MatchPlayer {
     
     // player been in their current on-field or off-field state
     func currentStintSeconds(match: Match, at now: Date) -> TimeInterval {
-        guard isOnField, let lastIn = lastSubInTime else {
-            return 0
-        }
-
-        return match.effectiveNow(at: now)
-            .timeIntervalSince(lastIn)
+        guard isOnField, let last = lastSubInMatchSeconds else { return 0 }
+        return match.elapsedSeconds(at: now) - last
     }
-    
+
     func benchSeconds(match: Match, at now: Date) -> TimeInterval {
-        guard !isOnField, let lastOut = lastSubOutTime else { return 0 }
-        return match.effectiveNow(at: now).timeIntervalSince(lastOut)
+        guard !isOnField, let last = lastSubOutMatchSeconds else { return 0 }
+        return match.elapsedSeconds(at: now) - last
     }
 }
