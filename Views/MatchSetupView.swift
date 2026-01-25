@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Foundation
 
 struct MatchSetupView: View {
     @Environment(\.dismiss) private var dismiss
@@ -18,8 +19,9 @@ struct MatchSetupView: View {
     @Query(sort: \Player.jerseyNumber)
     private var players: [Player]
 
-    @State private var selectedPlayerIDs: Set<PersistentIdentifier> = []
+    @State private var selectedPlayerIDs: Set<UUID> = []
     @State private var matchName: String = ""
+    @State private var editingPlayer: Player?
 
     let onMatchCreated: (Match) -> Void
 
@@ -60,25 +62,36 @@ struct MatchSetupView: View {
                 }
                 .padding(.horizontal)
 
-                // Player selection
-                List(players) { player in
-                    HStack {
-                        Text("#\(player.jerseyNumber)")
-                            .frame(width: 40)
+                // Player selection with edit/delete
+                List {
+                    ForEach(players) { player in
+                        HStack {
+                            Text("#\(player.jerseyNumber)")
+                                .frame(width: 40, alignment: .leading)
+                            Text(player.name)
+                            Spacer()
 
-                        Text(player.name)
+                            if selectedPlayerIDs.contains(player.id) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(.green)
+                            }
 
-                        Spacer()
-
-                        if selectedPlayerIDs.contains(player.persistentModelID) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
+                            Button {
+                                editingPlayer = player
+                            } label: {
+                                Image(systemName: "pencil")
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            toggleSelection(player)
                         }
                     }
-                    .contentShape(Rectangle())     // ⭐ makes entire row tappable
-                    .onTapGesture {
-                        toggle(player)
-                    }
+                    .onDelete(perform: deletePlayer)
+                }
+                .sheet(item: $editingPlayer) { player in
+                    PlayerEditView(player: player)
                 }
             }
         }
@@ -97,18 +110,25 @@ struct MatchSetupView: View {
 
     // MARK: - Helpers
 
-    private func toggle(_ player: Player) {
-        let id = player.persistentModelID
-        if selectedPlayerIDs.contains(id) {
-            selectedPlayerIDs.remove(id)
+    private func toggleSelection(_ player: Player) {
+        if selectedPlayerIDs.contains(player.id) {
+            selectedPlayerIDs.remove(player.id)
         } else {
-            selectedPlayerIDs.insert(id)
+            selectedPlayerIDs.insert(player.id)
+        }
+    }
+
+    private func deletePlayer(at offsets: IndexSet) {
+        for index in offsets {
+            let player = players[index]
+            modelContext.delete(player)
+            selectedPlayerIDs.remove(player.id)
         }
     }
 
     private func startMatch() {
         let selectedPlayers = players.filter {
-            selectedPlayerIDs.contains($0.persistentModelID)
+            selectedPlayerIDs.contains($0.id)
         }
 
         let finalName =

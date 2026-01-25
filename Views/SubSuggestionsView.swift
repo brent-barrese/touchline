@@ -23,7 +23,7 @@ struct SubSuggestionsView: View {
             } else {
                 ForEach(underplayedPlayers, id: \.player.id) { mp in
                     HStack {
-                        Text("#\(mp.player.jerseyNumber) \(mp.player.name)")
+                        Text("#" + String(mp.snapshotJerseyNumber) + " " + mp.snapshotName)
                         Spacer()
                         Text(formatTime(average - mp.secondsPlayed(match: match, at: now)))
                             .font(.system(.body, design: .monospaced))

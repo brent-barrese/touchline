@@ -28,12 +28,23 @@ class Match {
     var isEnded: Bool { endTime != nil }
     var isPaused: Bool { pausedAt != nil && endTime == nil }
     var hasStartedPlay: Bool { playStartedAt != nil }
+    
+    var playersSortedForDisplay: [MatchPlayer] {
+        matchPlayers.sorted {
+            $0.snapshotJerseyNumber < $1.snapshotJerseyNumber
+        }
+    }
 
     init(name: String, players: [Player], sport: SportType = .soccer) {
         self.name = name
         self.sport = sport
         self.name = name
-        self.matchPlayers = players.map { MatchPlayer(player: $0) }
+        self.matchPlayers = players.map {
+            let mp = MatchPlayer(player: $0)
+            mp.snapshotName = $0.name
+            mp.snapshotJerseyNumber = $0.jerseyNumber
+            return mp
+        }
     }
 
     func elapsedSeconds(at now: Date) -> TimeInterval {
@@ -45,6 +56,11 @@ class Match {
         }
 
         return now.timeIntervalSince(playStarted) - paused
+    }
+    
+    var finalElapsedSeconds: TimeInterval? {
+        guard let end = endTime, let start = playStartedAt else { return nil }
+        return end.timeIntervalSince(start) - totalPausedSeconds
     }
 
     func pause(at now: Date) {
@@ -130,7 +146,7 @@ class Match {
         for mp in matchPlayers {
             let playerTime = mp.secondsPlayed(match: self, at: now)
             print(
-                " - \(mp.player.name):",
+                " - \(mp.snapshotName):",
                 "isOnField=\(mp.isOnField)",
                 "lastSubInMatchSeconds=\(String(describing: mp.lastSubInMatchSeconds))",
                 "totalSecondsPlayed=\(mp.totalSecondsPlayed)",
@@ -180,7 +196,10 @@ class Match {
     }
     
     func end(at now: Date) {
-        let endMatchSeconds = elapsedSeconds(at: now)
+        guard !isEnded else { return }
+
+        // Use pausedAt time if match is currently paused
+        let endMatchSeconds = isPaused ? elapsedSeconds(at: pausedAt!) : elapsedSeconds(at: now)
 
         for mp in matchPlayers where mp.isOnField {
             if let last = mp.lastSubInMatchSeconds {
@@ -229,4 +248,29 @@ extension Match {
             $0.type == .goal && $0.player == player
         }.count
     }
+    
+    func addPlayerToMatch(_ player: Player, at now: Date) {
+        // Prevent duplicates
+        if matchPlayers.contains(where: { $0.player == player }) {
+            return
+        }
+
+        let mp = MatchPlayer(player: player)
+
+        // If match already started, they join "from the bench now"
+        if hasStartedPlay {
+            mp.isOnField = false
+            mp.lastSubOutMatchSeconds = elapsedSeconds(at: now)
+        }
+
+        matchPlayers.append(mp)
+    }
+    
+    func removePlayerFromMatch(_ mp: MatchPlayer) {
+        // Do not allow removing someone currently on field
+        guard !mp.isOnField else { return }
+
+        matchPlayers.removeAll { $0 === mp }
+    }
+    
 }

@@ -13,6 +13,9 @@ struct PlayersView: View {
     @Query(sort: \Player.jerseyNumber) private var players: [Player]
 
     @State private var showAddPlayer = false
+    @State private var editingPlayer: Player?
+    @State private var showDeleteConfirmation = false
+    @State private var playerToDelete: Player?
 
     var body: some View {
         List {
@@ -23,6 +26,19 @@ struct PlayersView: View {
                         .frame(width: 40, alignment: .leading)
 
                     Text(player.name)
+                    Spacer()
+                }
+                .swipeActions(edge: .trailing) {
+                    Button("Edit") {
+                        editingPlayer = player
+                    }
+                    .tint(.blue)
+
+                    Button("Delete") {
+                        playerToDelete = player
+                        showDeleteConfirmation = true
+                    }
+                    .tint(.red)
                 }
             }
         }
@@ -35,12 +51,24 @@ struct PlayersView: View {
             }
         }
         .sheet(isPresented: $showAddPlayer) {
-            AddPlayerView() // no modelContainer here
+            AddPlayerView()
+        }
+        .sheet(item: $editingPlayer) { player in
+            PlayerEditView(player: player)
+        }
+        .alert("Delete Player?", isPresented: $showDeleteConfirmation, presenting: playerToDelete) { player in
+            Button("Delete", role: .destructive) {
+                delete(player)
+            }
+            Button("Cancel", role: .cancel) {
+                playerToDelete = nil
+            }
+        } message: { _ in
+            Text("Deleting this player will not affect past matches.")
         }
     }
-}
 
-#Preview {
-    AddPlayerView()
-        .modelContainer(for: Player.self, inMemory: true)
+    private func delete(_ player: Player) {
+        modelContext.delete(player)
+    }
 }

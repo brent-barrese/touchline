@@ -15,7 +15,7 @@ struct MatchSummaryView: View {
             Section("Players") {
                 ForEach(match.matchPlayers) { mp in
                     HStack {
-                        Text("#\(mp.player.jerseyNumber) \(mp.player.name)")
+                        Text("#\(mp.snapshotJerseyNumber) \(mp.snapshotName)")
                         Spacer()
                         Text(formatTime(mp.totalSecondsPlayed))
                             .font(.system(.body, design: .monospaced))
@@ -42,7 +42,7 @@ struct MatchSummaryView: View {
                     let count = match.goals(for: mp.player)
                     if count > 0 {
                         HStack {
-                            Text(mp.player.name)
+                            Text(mp.snapshotName) // <-- use snapshot here too
                             Spacer()
                             Text("\(count)")
                         }
@@ -50,6 +50,19 @@ struct MatchSummaryView: View {
                 }
             }
         }
-        .navigationTitle(match.startTime.formatted(date: .abbreviated, time: .shortened))
+        .navigationTitle(match.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 2) {
+                    Text(match.name)
+                        .font(.headline)
+
+                    Text(match.startTime.formatted(date: .abbreviated, time: .shortened))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
     }
 }

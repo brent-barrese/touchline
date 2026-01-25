@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		D55670B72F140F9A0019DC8B /* SportType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55670B62F140F920019DC8B /* SportType.swift */; };
 		D55670B92F15D9F20019DC8B /* MatchPauseReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55670B82F15D9ED0019DC8B /* MatchPauseReason.swift */; };
+		D57D72ED2F2572C900E24075 /* PlayerEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57D72EC2F2572C500E24075 /* PlayerEditView.swift */; };
+		D57D72EF2F26783900E24075 /* MatchRosterEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57D72EE2F26783400E24075 /* MatchRosterEditView.swift */; };
 		D5E7E4E82F0CF0770013F986 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4E52F0CF0770013F986 /* ContentView.swift */; };
 		D5E7E4EE2F0CF5CE0013F986 /* PlayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4EC2F0CF5C50013F986 /* PlayersView.swift */; };
 		D5E7E4F12F0CF5E20013F986 /* MatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E7E4EF2F0CF5DA0013F986 /* MatchView.swift */; };
@@ -32,6 +34,8 @@
 /* Begin PBXFileReference section */
 		D55670B62F140F920019DC8B /* SportType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportType.swift; sourceTree = "<group>"; };
 		D55670B82F15D9ED0019DC8B /* MatchPauseReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchPauseReason.swift; sourceTree = "<group>"; };
+		D57D72EC2F2572C500E24075 /* PlayerEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerEditView.swift; sourceTree = "<group>"; };
+		D57D72EE2F26783400E24075 /* MatchRosterEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchRosterEditView.swift; sourceTree = "<group>"; };
 		D5DA84DE2F0AE2EF0061A5AE /* TouchLine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TouchLine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5E7E4E52F0CF0770013F986 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D5E7E4EC2F0CF5C50013F986 /* PlayersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersView.swift; sourceTree = "<group>"; };
@@ -109,6 +113,8 @@
 		D5E7E5052F0CFE7C0013F986 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D57D72EE2F26783400E24075 /* MatchRosterEditView.swift */,
+				D57D72EC2F2572C500E24075 /* PlayerEditView.swift */,
 				D5EF279F2F21DA250031E93E /* ScoreboardHeader.swift */,
 				D5E7E4FA2F0CFCE40013F986 /* AddPlayerView.swift */,
 				D5E7E4E52F0CF0770013F986 /* ContentView.swift */,
@@ -205,6 +211,7 @@
 				D5E7E4F12F0CF5E20013F986 /* MatchView.swift in Sources */,
 				D5E7E5132F0F60210013F986 /* MatchSetupView.swift in Sources */,
 				D5E801942F1BEDE30063B745 /* MatchEvent.swift in Sources */,
+				D57D72EF2F26783900E24075 /* MatchRosterEditView.swift in Sources */,
 				D5E7E5172F0F641B0013F986 /* TimeFormatter.swift in Sources */,
 				D55670B92F15D9F20019DC8B /* MatchPauseReason.swift in Sources */,
 				D5E7E5212F1049F00013F986 /* PlayerRow.swift in Sources */,
@@ -213,6 +220,7 @@
 				D5E7E51B2F0F78920013F986 /* MatchHistoryView.swift in Sources */,
 				D5E801962F1BF09B0063B745 /* Position.swift in Sources */,
 				D5E7E5192F0F71B80013F986 /* SubSuggestionsView.swift in Sources */,
+				D57D72ED2F2572C900E24075 /* PlayerEditView.swift in Sources */,
 				D5E7E4F62F0CF8BE0013F986 /* Player.swift in Sources */,
 				D5E7E5152F0F61760013F986 /* MatchClockView.swift in Sources */,
 				D5E7E4EE2F0CF5CE0013F986 /* PlayersView.swift in Sources */,
@@ -348,6 +356,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P749TLZ3U7;
@@ -363,8 +372,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.brentbarrese.touchline;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brentbarrese.touchline.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -380,6 +390,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P749TLZ3U7;
@@ -395,8 +406,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.brentbarrese.touchline;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brentbarrese.touchline.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;

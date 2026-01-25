@@ -12,10 +12,12 @@ import Combine
 struct MatchView: View {
     let match: Match
     var onMatchEnded: (() -> Void)? = nil
+    @Environment(\.modelContext) private var modelContext
 
     @State private var now = Date()
     @State private var showEndConfirmation = false
     @State private var timerCancellable: Cancellable?
+    @State private var showRosterEditor = false
 
     var body: some View {
         VStack {
@@ -49,7 +51,9 @@ struct MatchView: View {
                 
                 // on field
                 Section("On the Field") {
-                    ForEach(match.matchPlayers.filter { $0.isOnField }) { mp in
+                    ForEach(
+                        match.playersSortedForDisplay.filter { $0.isOnField }
+                    ) { mp in
                         PlayerRow(
                             match: match,
                             matchPlayer: mp,
@@ -61,7 +65,9 @@ struct MatchView: View {
                 
                 // on bench
                 Section("Bench") {
-                    ForEach(match.matchPlayers.filter { !$0.isOnField }) { mp in
+                    ForEach(
+                        match.playersSortedForDisplay.filter { !$0.isOnField }
+                    ) { mp in
                         PlayerRow(
                             match: match,
                             matchPlayer: mp,
@@ -77,6 +83,18 @@ struct MatchView: View {
         .alert("End Match?", isPresented: $showEndConfirmation) {
             Button("End Match", role: .destructive) { endMatch() }
             Button("Cancel", role: .cancel) {}
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showRosterEditor = true
+                } label: {
+                    Image(systemName: "person.badge.plus")
+                }
+            }
+        }
+        .sheet(isPresented: $showRosterEditor) {
+            MatchRosterEditView(match: match)
         }
     }
 
@@ -99,6 +117,12 @@ struct MatchView: View {
         guard !match.isEnded else { return }
         
         match.end(at: now)
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving ended match: \(error)")
+        }
         
         // 🔍 DEBUG — remove later
         print("=== MATCH EVENTS ===")

@@ -6,9 +6,11 @@
 //
 
 import SwiftData
+import Foundation
 
 @Model
-class Player {
+class Player: Identifiable {
+    @Attribute(.unique) var id: UUID = UUID()
     var name: String
     var jerseyNumber: Int
 

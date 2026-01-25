@@ -20,6 +20,10 @@ struct ScoreboardHeader: View {
     @State private var animateAgainst = false
 
     var body: some View {
+        let displaySeconds = match.isEnded
+            ? (match.finalElapsedSeconds ?? match.elapsedSeconds(at: now))
+            : match.elapsedSeconds(at: now)
+        
         VStack(spacing: 8) {
             // Match name
             Text(match.name)
@@ -27,7 +31,7 @@ struct ScoreboardHeader: View {
                 .foregroundColor(.secondary)
 
             // Clock (smaller, centered above the scores)
-            Text(formatTime(match.elapsedSeconds(at: now)))
+            Text(formatTime(displaySeconds))
                 .font(.system(size: 22, weight: .medium, design: .rounded))
                 .monospacedDigit()
                 .opacity(match.isEnded ? 0.4 : 1.0)

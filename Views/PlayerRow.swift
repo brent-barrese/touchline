@@ -18,7 +18,7 @@ struct PlayerRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(matchPlayer.player.name)
+                Text(matchPlayer.snapshotName)
                     .bold()
                 
                 Text(formatTime(totalSeconds))

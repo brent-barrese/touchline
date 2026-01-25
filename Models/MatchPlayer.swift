@@ -11,6 +11,10 @@ import SwiftUI
 @Model
 class MatchPlayer {
     var player: Player
+    // SNAPSHOT fields from Player (frozen at match start)
+    var snapshotName: String
+    var snapshotJerseyNumber: Int
+    
     var totalSecondsPlayed: TimeInterval = 0
     var isOnField: Bool = false
     var lastSubInMatchSeconds: TimeInterval?
@@ -19,6 +23,8 @@ class MatchPlayer {
 
     init(player: Player) {
         self.player = player
+        self.snapshotName = player.name
+        self.snapshotJerseyNumber = player.jerseyNumber
     }
 
     func secondsPlayed(match: Match, at now: Date) -> TimeInterval {
