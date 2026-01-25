@@ -21,7 +21,7 @@ struct PlayerRow: View {
                 Text(matchPlayer.snapshotName)
                     .bold()
                 
-                Text(formatTime(totalSeconds))
+                Text("Total: \(formatTime(totalSeconds))")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
 

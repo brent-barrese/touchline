@@ -61,7 +61,16 @@ struct MatchSetupView: View {
                         .textFieldStyle(.roundedBorder)
                 }
                 .padding(.horizontal)
-
+                
+                // ---------- Select All toggle ----------
+                Toggle("Select All Players", isOn: Binding(
+                    get: { selectedPlayerIDs.count == players.count && !players.isEmpty },
+                    set: { newValue in
+                        selectedPlayerIDs = newValue ? Set(players.map { $0.id }) : []
+                    }
+                ))
+                .padding(.horizontal)
+                
                 // Player selection with edit/delete
                 List {
                     ForEach(players) { player in
