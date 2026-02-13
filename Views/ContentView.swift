@@ -56,13 +56,13 @@ struct ContentView: View {
 
                 Spacer()
                 
-                // --- LOGO ADDED HERE ---
-                Image("psa-logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 100) // Adjust height as needed
-                    .padding(.vertical, 20)
-                // -----------------------
+//                // --- LOGO ADDED HERE ---
+//                Image("psa-logo")
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(height: 100) // Adjust height as needed
+//                    .padding(.vertical, 20)
+//                // -----------------------
             }
             .padding()
             .navigationTitle("TouchLine")
